@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ReactJS Button Example</title>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.14.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.14.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+
+    <script type="text/babel">
+        class ButtonComponent extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    fileName: '',
+                    file: null
+                };
+            }
+
+            handleFileChange = (event) => {
+                this.setState({
+                    file: event.target.files[0]
+                });
+            }
+
+            handleTextChange = (event) => {
+                this.setState({
+                    fileName: event.target.value
+                });
+            }
+
+            handleClick = async () => {
+                try {
+                    const formData = new FormData();
+                    formData.append('name', this.state.fileName);
+                    formData.append('file', this.state.file);
+
+                    const response = await fetch('/api/YourControllerName/Import', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    alert(data);
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+
+            render() {
+                return (
+                    <div>
+                        <input type="text" value={this.state.fileName} onChange={this.handleTextChange} placeholder="File Name" />
+                        <input type="file" onChange={this.handleFileChange} />
+                        <button onClick={this.handleClick}>Import Data</button>
+                    </div>
+                );
+            }
+        }
+
+        ReactDOM.render(
+            <ButtonComponent />,
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>
